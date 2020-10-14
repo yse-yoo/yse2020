@@ -11,6 +11,8 @@
 */
 
 //①セッションを開始する
+session_start();
+session_regenerate_id(true);
 
 //②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
 // if (/* ②の処理を書く */){
@@ -30,7 +32,6 @@ try {
 } catch (PDOException $e) {
 	exit;
 }
-
 
 //⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
 $sql = 'SELECT * FROM books;';

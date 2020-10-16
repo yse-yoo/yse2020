@@ -42,8 +42,7 @@ session_regenerate_id(true);
 //$query = $pdo->query($sql);
 //if (!$query) exit($sql);
 
-$book = new Book();
-$query = $book->connect()->paginate()->getBookQuery();
+$query = Book::db()->paginate()->getQueryList();
 
 ?>
 <!DOCTYPE html>
@@ -128,6 +127,7 @@ $query = $book->connect()->paginate()->getBookQuery();
 						[<a href="?page=<?= $page ?>"><?= $page ?></a>]
 					<?php endforeach ?>
 					[<a href="?page=<?= $book->total_page_count ?>">最後</a>]
+					[<a href="?reset=1">リセット</a>]
 				</div>
 			</div>
 		</div>

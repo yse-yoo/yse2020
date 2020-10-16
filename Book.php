@@ -1,12 +1,28 @@
 <?php
-require_once 'Entity.php';
+require_once 'PDOEntity.php';
 
-class Book extends Entity
+class Book extends PDOEntity
 {
     public $limit = 20;
     public $offset = 0;
 
-    function getBookQuery()
+    function getOne($id)
+    {
+        $sql = "SELECT * FROM books id = {$id};";
+        $query = $this->pdo->query($sql);
+        if (!$query) exit($sql);
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+
+    function getList($conditions = [])
+    {
+        $sql = "SELECT * FROM books;";
+        $query = $this->pdo->query($sql);
+        if (!$query) exit($sql);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function getQueryList()
     {
         $sql = "SELECT * FROM books LIMIT {$this->limit} OFFSET {$this->offset};";
         $query = $this->pdo->query($sql);

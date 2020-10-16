@@ -1,4 +1,6 @@
 <?php
+require_once 'Book.php';
+
 /* 
 【機能】
 書籍テーブルより書籍情報を取得し、画面に表示する。
@@ -9,6 +11,7 @@
 入荷する商品が選択されていません：商品が一つも選択されていない状態で入荷ボタンを押す
 出荷する商品が選択されていません：商品が一つも選択されていない状態で出荷ボタンを押す
 */
+
 
 //①セッションを開始する
 session_start();
@@ -22,20 +25,25 @@ session_regenerate_id(true);
 
 //⑤データベースへ接続し、接続情報を変数に保存する
 //⑥データベースで使用する文字コードを「UTF8」にする
-$db_name = 'zaiko2020_yse';
-$host = 'localhost';
-$user_name = 'zaiko2020_yse';
-$password = '2020zaiko';
-$dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
-try {
-	$pdo = new PDO($dsn, $user_name, $password);
-} catch (PDOException $e) {
-	exit;
-}
+// $db_name = 'zaiko2020_yse';
+// $host = 'localhost';
+// $user_name = 'zaiko2020_yse';
+// $password = '2020zaiko';
+// $dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
+// try {
+// 	$pdo = new PDO($dsn, $user_name, $password);
+// } catch (PDOException $e) {
+// 	exit;
+// }
+
 
 //⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
-$sql = 'SELECT * FROM books;';
-$query = $pdo->query($sql);
+//$sql = "SELECT * FROM books";
+//$query = $pdo->query($sql);
+//if (!$query) exit($sql);
+
+$book = new Book();
+$query = $book->connect()->paginate()->getBookQuery();
 
 ?>
 <!DOCTYPE html>
@@ -113,6 +121,14 @@ $query = $pdo->query($sql);
 						?>
 					</tbody>
 				</table>
+
+				<div id="paginate">
+					[<a href="?page=1">最初</a>]
+					<?php foreach ($book->pages as $page) : ?>
+						[<a href="?page=<?= $page ?>"><?= $page ?></a>]
+					<?php endforeach ?>
+					[<a href="?page=<?= $book->total_page_count ?>">最後</a>]
+				</div>
 			</div>
 		</div>
 	</form>

@@ -17,6 +17,9 @@ require_once 'Book.php';
 session_start();
 session_regenerate_id(true);
 
+$book = new Book();
+$query = $book->paginate()->getQueryList();
+
 //②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
 // if (/* ②の処理を書く */){
 // 	//③SESSIONの「error2」に「ログインしてください」と設定する。
@@ -41,8 +44,6 @@ session_regenerate_id(true);
 //$sql = "SELECT * FROM books";
 //$query = $pdo->query($sql);
 //if (!$query) exit($sql);
-
-$query = Book::db()->paginate()->getQueryList();
 
 ?>
 <!DOCTYPE html>

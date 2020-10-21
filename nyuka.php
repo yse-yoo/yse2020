@@ -110,15 +110,9 @@ function getId($id, $con)
 							<th id="in">入荷数</th>
 						</tr>
 					</thead>
-					<?php
-					/*
-					 * ⑮POSTの「books」から一つずつ値を取り出し、変数に保存する。
-					 */
-					foreach ($_POST['books'] as $book_id) {
-						// ⑯「getId」関数を呼び出し、変数に戻り値を入れる。その際引数に⑮の処理で取得した値と⑥のDBの接続情報を渡す。
-						$book = getId($book_id, $pdo);
-					?>
-						<input type="hidden" value="<?= $book['id'] ?>" name="books[]">
+
+					<?php foreach ($_POST['books'] as $book_id) : ?>
+						<?php $book = getId($book_id, $pdo); ?>
 						<tr>
 							<td><?= $book['id'] ?></td>
 							<td><?= $book['title'] ?></td>
@@ -126,11 +120,12 @@ function getId($id, $con)
 							<td><?= $book['salesDate'] ?></td>
 							<td><?= $book['price'] ?></td>
 							<td><?= $book['stock'] ?></td>
-							<td><input type='text' name='stock[]' size='5' maxlength='11' required></td>
+							<td>
+								<input type='text' name='stock[]' size='5' maxlength='11' required>
+								<input type="hidden" value="<?= $book['id'] ?>" name="books[]">
+							</td>
 						</tr>
-					<?php
-					}
-					?>
+					<?php endforeach ?>
 				</table>
 				<button type="submit" id="kakutei" formmethod="POST" name="decision" value="1">確定</button>
 			</div>

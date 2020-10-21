@@ -43,7 +43,6 @@ function updateByid($id, $con, $total)
 // }
 
 //⑧データベースへ接続し、接続情報を変数に保存する
-
 //⑨データベースで使用する文字コードを「UTF8」にする
 $db_name = 'zaiko2020_yse';
 $host = 'localhost';
@@ -132,8 +131,9 @@ foreach ($_POST['books'] as $index => $book_id) {
 					<tbody>
 						<?php
 						//㉜書籍数をカウントするための変数を宣言し、値を0で初期化する。
+						$index = 0;
 						//㉝POSTの「books」から値を取得し、変数に設定する。
-						foreach ($_POST['books'] as $index => $book_id) {
+						foreach ($_POST['books'] as $book_id) {
 							//㉞「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に㉜の処理で取得した値と⑧のDBの接続情報を渡す。
 							$book = getByid($book_id, $pdo);
 							$stock = $_POST['stock'][$index];
@@ -141,12 +141,15 @@ foreach ($_POST['books'] as $index => $book_id) {
 							<tr>
 								<td><?= $book['title']; ?></td>
 								<td><?= $book['stock']; ?></td>
-								<td><?= $stock; ?></td>
+								<td>
+									<?= $stock; ?>
+									<input type="hidden" id="message" name="books[]" value="<?= $book['id'] ?>">
+									<input type="hidden" id="message" name="stock[]" value='<?= $stock; ?>'>
+								</td>
 							</tr>
-							<input type="hidden" name="books[]" value="<?= $book['id'] ?>">
-							<input type="hidden" name="stock[]" value='<?= $stock; ?>'>
 						<?php
 							//㊴ ㉜で宣言した変数をインクリメントで値を1増やす。
+							$index++;
 						}
 						?>
 					</tbody>

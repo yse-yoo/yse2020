@@ -43,11 +43,11 @@ if (isset($_POST['decision']) && $_POST['decision'] == '1') {
 //⑦名前が入力されているか判定する。入力されていた場合はif文の中に入る
 if ($login_name) {
 	//⑧名前に「yse」、パスワードに「2019」と設定されているか確認する。設定されていた場合はif文の中に入る
-	if ($login_name == LOGIN_NAME && $password == LOGIN_PASSWORD){
+	if ($login_name == LOGIN_NAME && $password == LOGIN_PASSWORD) {
 		//⑨SESSIONに名前を設定し、SESSIONの「login」フラグをtrueにする
 		//⑩在庫一覧画面へ遷移する
 		header('location:zaiko_ichiran.php');
-	}else{
+	} else {
 		//⑪名前もしくはパスワードが間違っていた場合は、「ユーザー名かパスワードが間違っています」という文言をメッセージを入れる変数に設定する
 		$error_message = 'ユーザー名かパスワードが間違っています';
 	}
@@ -71,10 +71,7 @@ if ($login_name) {
 <body id="login">
 	<div id="main">
 		<h1>ログイン</h1>
-		<?php
-		//⑮エラーメッセージの変数に入っている値を表示する
-		echo "<div id='error'>", $error_message, "</div>";
-		?>
+		<div id='error'><?= $error_message ?></div>
 		<form action="login.php" method="post" id="log">
 			<p>
 				<input type='text' name="name" size='5' placeholder="Username">

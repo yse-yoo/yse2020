@@ -14,7 +14,6 @@ $is_class_mode = false;
 出荷する商品が選択されていません：商品が一つも選択されていない状態で出荷ボタンを押す
 */
 
-
 //①セッションを開始する
 session_start();
 session_regenerate_id(true);
@@ -106,27 +105,22 @@ if ($is_class_mode) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-						//⑩SQLの実行結果の変数から1レコードのデータを取り出す。レコードがない場合はループを終了する。
-						while ($extract = $query->fetch(PDO::FETCH_ASSOC)) {
-							//⑪extract変数を使用し、1レコードのデータを渡す。
-
-							echo "<tr>" . PHP_EOL;
-							echo "<td><input type='checkbox' name='books[]'value='{$extract['id']}'></td>" . PHP_EOL;
-							echo "<td>{$extract['id']}</td>" . PHP_EOL;
-							echo "<td>{$extract['title']}</td>" . PHP_EOL;
-							echo "<td>{$extract['author']}</td>" . PHP_EOL;
-							echo "<td>{$extract['salesDate']}</td>" . PHP_EOL;
-							echo "<td>{$extract['price']}</td>" . PHP_EOL;
-							echo "<td>{$extract['stock']}</td>" . PHP_EOL;
-							echo "</tr>" . PHP_EOL;
-						}
-						?>
+						<?php while ($extract = $query->fetch(PDO::FETCH_ASSOC)) : ?>
+							<tr>
+								<td><input type="checkbox" name="books[]" value="<?= $extract['id'] ?>"></td>
+								<td><?= $extract['id'] ?></td>
+								<td><?= $extract['title'] ?></td>
+								<td><?= $extract['author'] ?></td>
+								<td><?= $extract['salesDate'] ?></td>
+								<td><?= $extract['price'] ?></td>
+								<td><?= $extract['stock'] ?></td>
+							</tr>
+						<?php endwhile ?>
 					</tbody>
 				</table>
 
-				<?php if ($book->pages) : ?>
-					<div id="paginate">
+				<?php if (isset($book->pages)) : ?>
+					<div id=" paginate">
 						[<a href="?page=1">最初</a>]
 						<?php foreach ($book->pages as $page) : ?>
 							[<a href="?page=<?= $page ?>"><?= $page ?></a>]

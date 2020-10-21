@@ -59,6 +59,7 @@ try {
 //⑩書籍数をカウントするための変数を宣言し、値を0で初期化する
 
 //⑪POSTの「books」から値を取得し、変数に設定する。
+$books = [];
 foreach ($_POST['books'] as $index => $book_id) {
 	// 	/*
 	// 	 * ⑫POSTの「stock」について⑩の変数の値を使用して値を取り出す。
@@ -131,14 +132,9 @@ foreach ($_POST['books'] as $index => $book_id) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-						//㉜書籍数をカウントするための変数を宣言し、値を0で初期化する。
-						//㉝POSTの「books」から値を取得し、変数に設定する。
-						foreach ($_POST['books'] as $index => $book_id) {
-							//㉞「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に㉜の処理で取得した値と⑧のDBの接続情報を渡す。
-							$book = getByid($book_id, $pdo);
-							$stock = $_POST['stock'][$index];
-						?>
+						<?php foreach ($_POST['books'] as $index => $book_id) : ?>
+							<?php $book = getByid($book_id, $pdo); ?>
+							<?php $stock = $_POST['stock'][$index]; ?>
 							<tr>
 								<td><?= $book['title']; ?></td>
 								<td><?= $book['stock']; ?></td>
@@ -146,10 +142,7 @@ foreach ($_POST['books'] as $index => $book_id) {
 							</tr>
 							<input type="hidden" name="books[]" value="<?= $book['id'] ?>">
 							<input type="hidden" name="stock[]" value='<?= $stock; ?>'>
-						<?php
-							//㊴ ㉜で宣言した変数をインクリメントで値を1増やす。
-						}
-						?>
+						<?php endforeach ?>
 					</tbody>
 				</table>
 				<div id="kakunin">

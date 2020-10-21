@@ -1,7 +1,9 @@
 <?php
 require_once 'Book.php';
 
-/* 
+$is_class_mode = false;
+
+/*
 【機能】
 書籍テーブルより書籍情報を取得し、画面に表示する。
 商品をチェックし、ボタンを押すことで入荷、出荷が行える。
@@ -17,33 +19,34 @@ require_once 'Book.php';
 session_start();
 session_regenerate_id(true);
 
-$book = new Book();
-$query = $book->paginate()->getQueryList();
+if ($is_class_mode) {
+	$book = new Book();
+	$query = $book->paginate()->getQueryList();
+} else {
+	//②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
+	// if (/* ②の処理を書く */){
+	// //③SESSIONの「error2」に「ログインしてください」と設定する。
+	// //④ログイン画面へ遷移する。
+	// }
 
-//②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
-// if (/* ②の処理を書く */){
-// 	//③SESSIONの「error2」に「ログインしてください」と設定する。
-// 	//④ログイン画面へ遷移する。
-// }
+	//⑤データベースへ接続し、接続情報を変数に保存する
+	//⑥データベースで使用する文字コードを「UTF8」にする
+	$db_name = 'zaiko2020_yse';
+	$host = 'localhost';
+	$user_name = 'zaiko2020_yse';
+	$password = '2020zaiko';
+	$dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
+	try {
+		$pdo = new PDO($dsn, $user_name, $password);
+	} catch (PDOException $e) {
+		exit;
+	}
 
-//⑤データベースへ接続し、接続情報を変数に保存する
-//⑥データベースで使用する文字コードを「UTF8」にする
-// $db_name = 'zaiko2020_yse';
-// $host = 'localhost';
-// $user_name = 'zaiko2020_yse';
-// $password = '2020zaiko';
-// $dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
-// try {
-// 	$pdo = new PDO($dsn, $user_name, $password);
-// } catch (PDOException $e) {
-// 	exit;
-// }
-
-
-//⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
-//$sql = "SELECT * FROM books";
-//$query = $pdo->query($sql);
-//if (!$query) exit($sql);
+	//⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
+	$sql = "SELECT * FROM books";
+	$query = $pdo->query($sql);
+	if (!$query) exit($sql);
+}
 
 ?>
 <!DOCTYPE html>
@@ -122,14 +125,16 @@ $query = $book->paginate()->getQueryList();
 					</tbody>
 				</table>
 
-				<div id="paginate">
-					[<a href="?page=1">最初</a>]
-					<?php foreach ($book->pages as $page) : ?>
-						[<a href="?page=<?= $page ?>"><?= $page ?></a>]
-					<?php endforeach ?>
-					[<a href="?page=<?= $book->total_page_count ?>">最後</a>]
-					[<a href="?reset=1">リセット</a>]
-				</div>
+				<?php if ($book->pages) : ?>
+					<div id="paginate">
+						[<a href="?page=1">最初</a>]
+						<?php foreach ($book->pages as $page) : ?>
+							[<a href="?page=<?= $page ?>"><?= $page ?></a>]
+						<?php endforeach ?>
+						[<a href="?page=<?= $book->total_page_count ?>">最後</a>]
+						[<a href="?reset=1">リセット</a>]
+					</div>
+				<?php endif ?>
 			</div>
 		</div>
 	</form>

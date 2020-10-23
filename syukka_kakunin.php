@@ -61,11 +61,11 @@ try {
 	exit;
 }
 
+//⑩書籍数をカウントするための変数を宣言し、値を0で初期化する
+$index = 0;
+
 //⑪POSTの「books」から値を取得し、変数に設定する。
 foreach ($_POST['books'] as $book_id) {
-	//⑩書籍数をカウントするための変数を宣言し、値を0で初期化する
-	$index = 0;
-
 	// 	/*
 	// 	 * ⑫POSTの「stock」について⑩の変数の値を使用して値を取り出す。
 	// 	 * 半角数字以外の文字が設定されていないかを「is_numeric」関数を使用して確認する。
@@ -166,12 +166,10 @@ foreach ($_POST['books'] as $book_id) {
 							<tr>
 								<td><?= $book['title']; ?></td>
 								<td><?= $book['stock']; ?></td>
-								<td>
-									<?= $stock; ?>
-									<input type="hidden" id="message" name="books[]" value="<?= $book['id'] ?>">
-									<input type="hidden" id="message" name="stock[]" value='<?= $stock; ?>'>
-								</td>
+								<td><?= $stock; ?></td>
 							</tr>
+							<input type="hidden" id="message" name="books[]" value="<?= $book['id'] ?>">
+							<input type="hidden" id="message" name="stock[]" value='<?= $stock; ?>'>
 						<?php
 							//㊴ ㉜で宣言した変数をインクリメントで値を1増やす。
 							$index++;

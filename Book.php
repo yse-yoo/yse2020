@@ -8,7 +8,7 @@ class Book extends PDOEntity
 
     function getOne($id)
     {
-        $sql = "SELECT * FROM books id = {$id};";
+        $sql = "SELECT * FROM books WHERE id = {$id};";
         $query = $this->pdo->query($sql);
         if (!$query) exit($sql);
         return $query->fetch(PDO::FETCH_ASSOC);
@@ -70,4 +70,20 @@ class Book extends PDOEntity
         $this->pages = range($this->current_page, $this->current_page + 10);
         return $this;
     }
+
+    function fetch($id)
+    {
+        $this->value = $this->getOne($id);
+        return $this;
+    }
+
+    function updateStock($id, $stock)
+    {
+        if ($id > 0 && $stock > 0 && $stock <= 100) {
+            $sql = "UPDATE books SET stock = {$stock} WHERE id = {$id}";
+            $this->pdo->query($sql);
+        } 
+        return $this;
+    }
+
 }

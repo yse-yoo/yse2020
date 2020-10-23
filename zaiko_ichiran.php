@@ -1,7 +1,7 @@
 <?php
 require_once 'Book.php';
 
-$is_class_mode = false;
+$is_class_mode = true;
 
 /*
 【機能】
@@ -18,15 +18,18 @@ $is_class_mode = false;
 session_start();
 session_regenerate_id(true);
 
+//②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
+if (!$_SESSION['login']) {
+	//③SESSIONの「error2」に「ログインしてください」と設定する。
+	$_SESSION['error2'] = 'ログインしてください';
+	//④ログイン画面へ遷移する。
+	header('location: login.php');
+}
+
 if ($is_class_mode) {
 	$book = new Book();
 	$query = $book->paginate()->getQueryList();
 } else {
-	//②SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
-	// if (/* ②の処理を書く */){
-	// //③SESSIONの「error2」に「ログインしてください」と設定する。
-	// //④ログイン画面へ遷移する。
-	// }
 
 	//⑤データベースへ接続し、接続情報を変数に保存する
 	//⑥データベースで使用する文字コードを「UTF8」にする
@@ -70,18 +73,17 @@ if ($is_class_mode) {
 				 * ⑧SESSIONの「success」にメッセージが設定されているかを判定する。
 				 * 設定されていた場合はif文の中に入る。
 				 */
-				// if(/* ⑧の処理を書く */){
-				// 	//⑨SESSIONの「success」の中身を表示する。
-				// }
+				if(isset($_SESSION['success'])){
+					//⑨SESSIONの「success」の中身を表示する。
+					echo $_SESSION['success'];
+				}
 				?>
 			</div>
 
 			<!-- 左メニュー -->
 			<div id="left">
 				<p id="ninsyou_ippan">
-					<?php
-					echo @$_SESSION["account_name"];
-					?><br>
+					<?= @$_SESSION["account_name"] ?><br>
 					<button type="button" id="logout" onclick="location.href='logout.php'">ログアウト</button>
 				</p>
 				<button type="submit" id="btn1" formmethod="POST" name="decision" value="3" formaction="nyuka.php">入荷</button>
@@ -119,16 +121,7 @@ if ($is_class_mode) {
 					</tbody>
 				</table>
 
-				<?php if (isset($book->pages)) : ?>
-					<div id=" paginate">
-						[<a href="?page=1">最初</a>]
-						<?php foreach ($book->pages as $page) : ?>
-							[<a href="?page=<?= $page ?>"><?= $page ?></a>]
-						<?php endforeach ?>
-						[<a href="?page=<?= $book->total_page_count ?>">最後</a>]
-						[<a href="?reset=1">リセット</a>]
-					</div>
-				<?php endif ?>
+				<?php if ($is_class_mode) include('paginate.php'); ?>
 			</div>
 		</div>
 	</form>

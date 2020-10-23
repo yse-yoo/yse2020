@@ -7,6 +7,8 @@
 【エラー一覧（エラー表示：発生条件）】
 なし
 */
+require_once 'Book.php';
+$is_class_mode = true;
 
 //①セッションを開始する
 session_start();
@@ -34,16 +36,21 @@ function updateByid($id, $con, $total)
 	 * 引数で受け取った$totalの値で在庫数を上書く。
 	 * その際にWHERE句でメソッドの引数に$idに一致する書籍のみ取得する。
 	 */
+	if ($id > 0) {
+		$sql = "UPDATE books SET stock = {$total} WHERE id = {$id}";
+		$con->query($sql);
+	}
 }
 
 //⑤SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
-// if (/* ⑤の処理を書く */){
-// ⑥SESSIONの「error2」に「ログインしてください」と設定する。
-// ⑦ログイン画面へ遷移する。
-// }
+if (!$_SESSION['login']) {
+	// ⑥SESSIONの「error2」に「ログインしてください」と設定する。
+	$_SESSION['error2'] = 'ログインしてください';
+	// ⑦ログイン画面へ遷移する。
+	header('location: login.php');
+}
 
 //⑧データベースへ接続し、接続情報を変数に保存する
-
 //⑨データベースで使用する文字コードを「UTF8」にする
 $db_name = 'zaiko2020_yse';
 $host = 'localhost';
@@ -57,10 +64,10 @@ try {
 }
 
 //⑩書籍数をカウントするための変数を宣言し、値を0で初期化する
+$index = 0;
 
 //⑪POSTの「books」から値を取得し、変数に設定する。
-$books = [];
-foreach ($_POST['books'] as $index => $book_id) {
+foreach ($_POST['books'] as $book_id) {
 	// 	/*
 	// 	 * ⑫POSTの「stock」について⑩の変数の値を使用して値を取り出す。
 	// 	 * 半角数字以外の文字が設定されていないかを「is_numeric」関数を使用して確認する。
@@ -69,43 +76,64 @@ foreach ($_POST['books'] as $index => $book_id) {
 	$stock = $_POST['stock'][$index];
 	if (!is_numeric($stock)) {
 		//⑬SESSIONの「error」に「数値以外が入力されています」と設定する。
+		$_SESSION['error'] = '数値以外が入力されています';
 		//⑭「include」を使用して「nyuka.php」を呼び出す。
+		include 'nyuka.php';
 		//⑮「exit」関数で処理を終了する。
 		exit;
 	}
 
-	// 	//⑯「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に⑪の処理で取得した値と⑧のDBの接続情報を渡す。
+	//⑯「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に⑪の処理で取得した値と⑧のDBの接続情報を渡す。
+	$book = getByid($book_id, $pdo);
 
-	// 	//⑰ ⑯で取得した書籍の情報の「stock」と、⑩の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。
+	//⑰ ⑯で取得した書籍の情報の「stock」と、⑩の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。
+	$total_stock = $stock + $book['stock'];
 
-	// 	//⑱ ⑰の値が100を超えているか判定する。超えていた場合はif文の中に入る。
-	// 	if(/* ⑱の処理を行う */){
-	// 		//⑲SESSIONの「error」に「最大在庫数を超える数は入力できません」と設定する。
-	// 		//⑳「include」を使用して「nyuka.php」を呼び出す。
-	// 		//㉑「exit」関数で処理を終了する。
-	// 	}
+	//⑱ ⑰の値が100を超えているか判定する。超えていた場合はif文の中に入る。
+	if($total_stock > 100){
+		//⑲SESSIONの「error」に「最大在庫数を超える数は入力できません」と設定する。
+		$_SESSION['error'] = '最大在庫数を超える数は入力できません';
+		//⑳「include」を使用して「nyuka.php」を呼び出す。
+		include 'nyuka.php';
+		//㉑「exit」関数で処理を終了する。
+		exit;
+	}
 
-	// 	//㉒ ⑩で宣言した変数をインクリメントで値を1増やす。
+	//㉒ ⑩で宣言した変数をインクリメントで値を1増やす。
+	$index++;
 }
+
+unset($_SESSION['error']);
 
 /*
  * ㉓POSTでこの画面のボタンの「add」に値が入ってるか確認する。
  * 値が入っている場合は中身に「ok」が設定されていることを確認する。
  */
-// if(/* ㉓の処理を書く */){
-// 	//㉔書籍数をカウントするための変数を宣言し、値を0で初期化する。
+if(isset($_POST['add']) && $_POST['add'] == 'ok'){
+	//㉔書籍数をカウントするための変数を宣言し、値を0で初期化する。
+	//㉕POSTの「books」から値を取得し、変数に設定する。
+	foreach($_POST['books'] as $index => $book_id){
+		//㉖「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に㉕の処理で取得した値と⑧のDBの接続情報を渡す。
+		$book = getByid($book_id, $pdo);
+		//㉗ ㉖で取得した書籍の情報の「stock」と、㉔の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。
+		$stock = $_POST['stock'][$index];
+		$total_stock = $stock + $book['stock'];
 
-// 	//㉕POSTの「books」から値を取得し、変数に設定する。
-// 	foreach(/* ㉕の処理を書く */){
-// 		//㉖「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に㉕の処理で取得した値と⑧のDBの接続情報を渡す。
-// 		//㉗ ㉖で取得した書籍の情報の「stock」と、㉔の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。
-// 		//㉘「updateByid」関数を呼び出す。その際に引数に㉕の処理で取得した値と⑧のDBの接続情報と㉗で計算した値を渡す。
-// 		//㉙ ㉔で宣言した変数をインクリメントで値を1増やす。
-// 	}
+		//㉘「updateByid」関数を呼び出す。その際に引数に㉕の処理で取得した値と⑧のDBの接続情報と㉗で計算した値を渡す。
+		if ($is_class_mode) {
+			$book = new Book();
+			$book->updateStock($book_id, $total_stock);
+		} else {
+			updateByid($book_id, $pdo, $total_stock);
+		}
+		//㉙ ㉔で宣言した変数をインクリメントで値を1増やす。
+	}
 
-// 	//㉚SESSIONの「success」に「入荷が完了しました」と設定する。
-// 	//㉛「header」関数を使用して在庫一覧画面へ遷移する。
-// }
+	//㉚SESSIONの「success」に「入荷が完了しました」と設定する。
+	$_SESSION['success'] = '入荷が完了しました';
+	//㉛「header」関数を使用して在庫一覧画面へ遷移する。
+	header('location: zaiko_ichiran.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">

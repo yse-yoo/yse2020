@@ -14,6 +14,8 @@ define('LOGIN_PASSWORD', '2019');
 	ログインしてください：ログインしていない状態で他のページに遷移した場合(ログイン画面に遷移し上記を表示)
 */
 //⑥セッションを開始する
+session_start();
+session_regenerate_id(true);
 
 //①名前とパスワードを入れる変数を初期化する
 //初期化
@@ -45,6 +47,7 @@ if ($login_name) {
 	//⑧名前に「yse」、パスワードに「2019」と設定されているか確認する。設定されていた場合はif文の中に入る
 	if ($login_name == LOGIN_NAME && $password == LOGIN_PASSWORD) {
 		//⑨SESSIONに名前を設定し、SESSIONの「login」フラグをtrueにする
+		$_SESSION['login'] = true;
 		//⑩在庫一覧画面へ遷移する
 		header('location:zaiko_ichiran.php');
 	} else {
@@ -54,10 +57,12 @@ if ($login_name) {
 }
 
 //⑫SESSIONの「error2」に値が入っているか判定する。入っていた場合はif文の中に入る
-// if (/* ⑫の処理を書く */) {
-// 	//⑬SESSIONの「error2」の値をエラーメッセージを入れる変数に設定する。
-// 	//⑭SESSIONの「error2」にnullを入れる。
-// }
+if (isset($_SESSION['error2'])) {
+	//⑬SESSIONの「error2」の値をエラーメッセージを入れる変数に設定する。
+	//⑭SESSIONの「error2」にnullを入れる。
+	$error_message = $_SESSION['error2'];
+	$_SESSION['error2'] = null;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">

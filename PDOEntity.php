@@ -6,6 +6,8 @@ class PDOEntity
     public $user_name = 'zaiko2020_yse';
     public $password = '2020zaiko';
     public $pdo;
+    public $id;
+    public $value;
 
     function __construct()
     {

@@ -9,33 +9,33 @@ class Book extends PDOEntity
     function getOne($id)
     {
         $sql = "SELECT * FROM books WHERE id = {$id};";
-        $query = $this->pdo->query($sql);
-        if (!$query) exit($sql);
-        return $query->fetch(PDO::FETCH_ASSOC);
+        $this->query = $this->pdo->query($sql);
+        if (!$this->query) exit($sql);
+        return $this->query->fetch(PDO::FETCH_ASSOC);
     }
 
     function getList($conditions = [])
     {
         $sql = "SELECT * FROM books;";
-        $query = $this->pdo->query($sql);
-        if (!$query) exit($sql);
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        $this->query = $this->pdo->query($sql);
+        if (!$this->query) exit($sql);
+        return $this->query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    function getQueryList()
+    function queryList()
     {
         $sql = "SELECT * FROM books LIMIT {$this->limit} OFFSET {$this->offset};";
-        $query = $this->pdo->query($sql);
-        if (!$query) exit($sql);
-        return $query;
+        $this->query = $this->pdo->query($sql);
+        if (!$this->query) exit($sql);
+        return $this;
     }
 
     function getCount()
     {
         $sql = "SELECT count(id) AS count FROM books;";
-        $query = $this->pdo->query($sql);
-        if (!$query) exit($sql);
-        $result = $query->fetch(PDO::FETCH_ASSOC);
+        $this->query = $this->pdo->query($sql);
+        if (!$this->query) exit($sql);
+        $result = $this->query->fetch(PDO::FETCH_ASSOC);
         $this->count = (int) $result['count'];
         return $this->count;
     }
@@ -82,8 +82,7 @@ class Book extends PDOEntity
         if ($id > 0 && $stock > 0 && $stock <= 100) {
             $sql = "UPDATE books SET stock = {$stock} WHERE id = {$id}";
             $this->pdo->query($sql);
-        } 
+        }
         return $this;
     }
-
 }

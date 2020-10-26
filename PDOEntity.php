@@ -8,10 +8,11 @@ class PDOEntity
     public $pdo;
     public $id;
     public $value;
+    public $query;
 
     function __construct()
     {
-       return $this->connect(); 
+        return $this->connect();
     }
 
     static function db()
@@ -28,5 +29,10 @@ class PDOEntity
             exit;
         }
         return $this;
+    }
+
+    public function getRow()
+    {
+        return $this->query->fetch(PDO::FETCH_ASSOC);
     }
 }

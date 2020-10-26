@@ -72,31 +72,31 @@ foreach ($_POST['books'] as $book_id) {
 	* 半角数字以外の文字が設定されていないかを「is_numeric」関数を使用して確認する。
 	* 半角数字以外の文字が入っていた場合はif文の中に入る。
 	*/
-	//$stock = $_POST['stock'][$index];
-	// if (!is_numeric($stock)) {
-	// 	//⑬SESSIONの「error」に「数値以外が入力されています」と設定する。
-	// 	$_SESSION['error'] = '数値以外が入力されています';
-	// 	//⑭「include」を使用して「nyuka.php」を呼び出す。
-	// 	include 'nyuka.php';
-	// 	//⑮「exit」関数で処理を終了する。
-	// 	exit;
-	// }
+	$stock = $_POST['stock'][$index];
+	if (!is_numeric($stock)) {
+		//⑬SESSIONの「error」に「数値以外が入力されています」と設定する。
+		$_SESSION['error'] = '数値以外が入力されています';
+		//⑭「include」を使用して「nyuka.php」を呼び出す。
+		include 'nyuka.php';
+		//⑮「exit」関数で処理を終了する。
+		exit;
+	}
 
 	//⑯「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に⑪の処理で取得した値と⑧のDBの接続情報を渡す。
-	// $book = getByid($book_id, $pdo);
+	$book = getByid($book_id, $pdo);
 
 	//⑰ ⑯で取得した書籍の情報の「stock」と、⑩の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。
-	// $total_stock = $stock + $book['stock'];
+	$total_stock = $stock + $book['stock'];
 
 	//⑱ ⑰の値が100を超えているか判定する。超えていた場合はif文の中に入る。
-	// if($total_stock > 100){
-	// 	//⑲SESSIONの「error」に「最大在庫数を超える数は入力できません」と設定する。
-	// 	$_SESSION['error'] = '最大在庫数を超える数は入力できません';
-	// 	//⑳「include」を使用して「nyuka.php」を呼び出す。
-	// 	include 'nyuka.php';
-	// 	//㉑「exit」関数で処理を終了する。
-	// 	exit;
-	// }
+	if ($total_stock > 100) {
+		//⑲SESSIONの「error」に「最大在庫数を超える数は入力できません」と設定する。
+		$_SESSION['error'] = '最大在庫数を超える数は入力できません';
+		//⑳「include」を使用して「nyuka.php」を呼び出す。
+		include 'nyuka.php';
+		//㉑「exit」関数で処理を終了する。
+		exit;
+	}
 
 	//㉒ ⑩で宣言した変数をインクリメントで値を1増やす。
 	$index++;
@@ -108,12 +108,12 @@ unset($_SESSION['error']);
  * ㉓POSTでこの画面のボタンの「add」に値が入ってるか確認する。
  * 値が入っている場合は中身に「ok」が設定されていることを確認する。
  */
-if(isset($_POST['add']) && $_POST['add'] == 'ok'){
+if (isset($_POST['add']) && $_POST['add'] == 'ok') {
 	//㉔書籍数をカウントするための変数を宣言し、値を0で初期化する。
 	$index = 0;
 
 	//㉕POSTの「books」から値を取得し、変数に設定する。
-	foreach($_POST['books'] as $book_id){
+	foreach ($_POST['books'] as $book_id) {
 		//㉖「getByid」関数を呼び出し、変数に戻り値を入れる。その際引数に㉕の処理で取得した値と⑧のDBの接続情報を渡す。
 		$book = getByid($book_id, $pdo);
 		//㉗ ㉖で取得した書籍の情報の「stock」と、㉔の変数を元にPOSTの「stock」から値を取り出し、足した値を変数に保存する。

@@ -14,6 +14,13 @@ require_once 'ZaikoService.php';
 	<div id="header">
 		<h1>書籍一覧</h1>
 	</div>
+	<div id="pagebody">
+		<form action="zaiko_ichiran.php" method="get">
+			<input type="text" name="search" value="<?= @$_SESSION['zaiko']['search'] ?>">
+			<button>検索</button>
+			<a href="?reset=1">リセット</a>
+		</form>
+	</div>
 	<form action="zaiko_ichiran.php" method="post" id="myform" name="myform">
 		<div id="pagebody">
 			<div id="error">
@@ -43,7 +50,7 @@ require_once 'ZaikoService.php';
 						</tr>
 					</thead>
 					<tbody>
-						<?php while ($extract = $book->getRow()) : ?>
+						<?php while ($extract = $book->getQueryRow()) : ?>
 							<tr>
 								<td><input type="checkbox" name="books[]" value="<?= $extract['id'] ?>"></td>
 								<td><?= $extract['id'] ?></td>

@@ -3,51 +3,60 @@ require_once 'PDOEntity.php';
 
 class Book extends PDOEntity
 {
-    public $limit = 20;
-    public $offset = 0;
+    public $current_limit = 20;
+    public $current_offset = 0;
+    public $current_count = 0;
 
-    function getOne($id)
+    public function search()
     {
-        $sql = "SELECT * FROM books WHERE id = {$id};";
-        $this->query = $this->pdo->query($sql);
-        if (!$this->query) exit($sql);
-        return $this->query->fetch(PDO::FETCH_ASSOC);
-    }
-
-    function getList($conditions = [])
-    {
-        $sql = "SELECT * FROM books;";
-        $this->query = $this->pdo->query($sql);
-        if (!$this->query) exit($sql);
-        return $this->query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    function queryList()
-    {
-        $sql = "SELECT * FROM books LIMIT {$this->limit} OFFSET {$this->offset};";
-        $this->query = $this->pdo->query($sql);
-        if (!$this->query) exit($sql);
+        if (isset($_GET['search'])) {
+            $_SESSION['zaiko']['search'] = $_GET['search'];
+        }
+        if (isset($_SESSION['zaiko']['search'])) {
+            $this->like('title', $_SESSION['zaiko']['search']);
+        }
         return $this;
     }
 
-    function getCount()
+    public function getOne($id)
     {
-        $sql = "SELECT count(id) AS count FROM books;";
-        $this->query = $this->pdo->query($sql);
-        if (!$this->query) exit($sql);
-        $result = $this->query->fetch(PDO::FETCH_ASSOC);
-        $this->count = (int) $result['count'];
-        return $this->count;
+        $this->sql = "SELECT * FROM books WHERE id = {$id};";
+        $this->query();
+        if (!$this->statement) exit($this->sql);
+        return $this->statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getList($conditions = [])
+    {
+        $this->sql = "SELECT * FROM books";
+        $this->query();
+        if (!$this->statement) exit($this->sql);
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function queryList()
+    {
+        $this->sql = "SELECT * FROM books";
+        $this->limit($this->current_limit)->offset($this->current_offset)->query();
+        return $this;
+    }
+
+    public function getCount()
+    {
+        $this->sql = "SELECT count(id) AS count FROM books";
+        $results = $this->getRow();
+        if (isset($results['count'])) $this->current_count = $results['count'];
+        return $this->current_count;
     }
 
     function getTotalPageCount()
     {
-        $this->total_page_count = (int) ceil($this->count / $this->limit);
+        $this->total_page_count = (int) ceil($this->current_count / $this->current_limit);
+        return $this->total_page_count;
     }
 
     function getCurrentPage()
     {
-        if (isset($_GET['reset'])) unset($_SESSION['zaiko']['page']);
         $this->current_page = (isset($_SESSION['zaiko']['page'])) ? $_SESSION['zaiko']['page'] : 1;
         if (isset($_GET['page']) && $_GET['page'] > 0) {
             $this->current_page = $_SESSION['zaiko']['page'] = $_GET['page'];
@@ -57,17 +66,30 @@ class Book extends PDOEntity
 
     function getOffset()
     {
-        $this->offset = ($this->current_page - 1) * $this->limit;
-        return $this->offset;
+        $this->current_offset = ($this->current_page - 1) * $this->current_limit;
+        return $this->current_offset;
     }
 
-    function Paginate()
+    function paginate()
     {
-        $this->count = $this->getCount();
+        $this->search();
+        $this->current_count = $this->getCount();
         $this->current_page = $this->getCurrentPage();
-        $this->offset = $this->getOffset();
+        $this->current_offset = $this->getOffset();
         $this->total_page_count = $this->getTotalPageCount();
-        $this->pages = range($this->current_page, $this->current_page + 10);
+
+        if ($this->total_page_count > 10) {
+            $this->pages = range($this->current_page, $this->current_page + 10);
+        } else {
+            $max_page_count = $this->current_page + $this->total_page_count;
+            if ($max_page_count > $this->current_count) {
+                $max_page_count = $this->current_count;
+            }
+            $this->pages = range($this->current_page, $max_page_count);
+        }
+
+        $this->statement = null;
+        $this->queryList();
         return $this;
     }
 
@@ -80,8 +102,8 @@ class Book extends PDOEntity
     function updateStock($id, $stock)
     {
         if ($id > 0 && $stock > 0 && $stock <= 100) {
-            $sql = "UPDATE books SET stock = {$stock} WHERE id = {$id}";
-            $this->pdo->query($sql);
+            $this->sql = "UPDATE books SET stock = {$stock} WHERE id = {$id}";
+            $this->pdo->query($this->sql);
         }
         return $this;
     }

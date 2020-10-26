@@ -1,8 +1,4 @@
 <?php
-require_once 'Book.php';
-
-$is_class_mode = true;
-
 /*
 【機能】
 書籍テーブルより書籍情報を取得し、画面に表示する。
@@ -26,29 +22,23 @@ if (!$_SESSION['login']) {
 	header('location: login.php');
 }
 
-if ($is_class_mode) {
-	$book = new Book();
-	$query = $book->paginate()->getQueryList();
-} else {
-
-	//⑤データベースへ接続し、接続情報を変数に保存する
-	//⑥データベースで使用する文字コードを「UTF8」にする
-	$db_name = 'zaiko2020_yse';
-	$host = 'localhost';
-	$user_name = 'zaiko2020_yse';
-	$password = '2020zaiko';
-	$dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
-	try {
-		$pdo = new PDO($dsn, $user_name, $password);
-	} catch (PDOException $e) {
-		exit;
-	}
-
-	//⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
-	$sql = "SELECT * FROM books";
-	$query = $pdo->query($sql);
-	if (!$query) exit($sql);
+//⑤データベースへ接続し、接続情報を変数に保存する
+//⑥データベースで使用する文字コードを「UTF8」にする
+$db_name = 'zaiko2020_yse';
+$host = 'localhost';
+$user_name = 'zaiko2020_yse';
+$password = '2020zaiko';
+$dsn = "mysql:dbname={$db_name};host={$host};charset=utf8";
+try {
+	$pdo = new PDO($dsn, $user_name, $password);
+} catch (PDOException $e) {
+	exit;
 }
+
+//⑦書籍テーブルから書籍情報を取得するSQLを実行する。また実行結果を変数に保存する
+$sql = "SELECT * FROM books";
+$query = $pdo->query($sql);
+if (!$query) exit($sql);
 
 ?>
 <!DOCTYPE html>
@@ -73,7 +63,7 @@ if ($is_class_mode) {
 				 * ⑧SESSIONの「success」にメッセージが設定されているかを判定する。
 				 * 設定されていた場合はif文の中に入る。
 				 */
-				if(isset($_SESSION['success'])){
+				if (isset($_SESSION['success'])) {
 					//⑨SESSIONの「success」の中身を表示する。
 					echo $_SESSION['success'];
 				}
@@ -120,8 +110,6 @@ if ($is_class_mode) {
 						<?php endwhile ?>
 					</tbody>
 				</table>
-
-				<?php if ($is_class_mode) include('paginate.php'); ?>
 			</div>
 		</div>
 	</form>

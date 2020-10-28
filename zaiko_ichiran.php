@@ -8,16 +8,17 @@ require_once 'ZaikoService.php';
 	<meta charset="UTF-8">
 	<title>書籍一覧</title>
 	<link rel="stylesheet" href="css/ichiran.css" type="text/css" />
+	<link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
 
 <body>
 	<div id="header">
 		<h1>書籍一覧</h1>
 	</div>
-	<div id="pagebody">
+	<div class="search form">
 		<form action="zaiko_ichiran.php" method="get">
 			<input type="text" name="search" value="<?= @$_SESSION['zaiko']['search'] ?>">
-			<button>検索</button>
+			<button class="btn info">検索</button>
 			<a href="?reset=1">リセット</a>
 		</form>
 	</div>

@@ -94,6 +94,7 @@ foreach ($_POST['books'] as $book_id) {
 		$_SESSION['error'] = '最大在庫数を超える数は入力できません';
 		//⑳「include」を使用して「nyuka.php」を呼び出す。
 		include 'nyuka.php';
+		//header('Location: nyuka.php');
 		//㉑「exit」関数で処理を終了する。
 		exit;
 	}

@@ -10,6 +10,32 @@
     padding: 3px 10px;
 }
 
+.btn {
+	margin-top: 20px;
+	margin-left: 15px;
+	width:75px;
+	height: 40px;
+	outline: none;
+	font-family:"huifont";
+	font-size: 20px;
+	text-align: center;
+	background-color: #1abc9c;
+	border-radius: 4px;
+	color: #fff;
+	box-shadow: 3px 3px 0px #0e8c73;
+	border-style: none;
+}
+
+.btn :hover{
+	background-color: #31c8aa;
+	box-shadow: 3px 3px 0 #23a188;
+}
+
+.btn :active{
+	top: 3px;
+	box-shadow: none;
+}
+
 .btn.info {
     color: rgb(0, 89, 116);
 }

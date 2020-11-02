@@ -6,6 +6,24 @@ class Book extends PDOEntity
     public $current_limit = 20;
     public $current_offset = 0;
     public $current_count = 0;
+    public $table_name = 'books';
+
+    public $columns = [
+        'title' => ['type' => 'varchar'],
+        'author' => ['type' => 'varchar'],
+        'salesDate' => ['type' => 'date_string'],
+        'isbn' => ['type' => 'varchar'],
+        'price' => ['type' => 'varchar'],
+        'stock' => ['type' => 'varchar'],
+    ];
+
+    public function nextId()
+    {
+        $this->sql = "SELECT max(id) + 1 as id FROM books;";
+        $result = $this->getRow();
+        $this->next_id = $result['id'];
+        return $this;
+    }
 
     public function search()
     {

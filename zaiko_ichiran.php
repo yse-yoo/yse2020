@@ -19,7 +19,7 @@ require_once 'ZaikoService.php';
 		<form action="zaiko_ichiran.php" method="get">
 			<input type="text" name="search" value="<?= @$_SESSION['zaiko']['search'] ?>">
 			<button class="btn info">検索</button>
-			<a href="?reset=1">リセット</a>
+			<a href="?reset=1" class="btn">リセット</a>
 		</form>
 	</div>
 	<form action="zaiko_ichiran.php" method="post" id="myform" name="myform">
@@ -36,6 +36,8 @@ require_once 'ZaikoService.php';
 				<button type="submit" id="btn1" formmethod="POST" name="decision" value="3" formaction="nyuka.php">入荷</button>
 
 				<button type="submit" id="btn1" formmethod="POST" name="decision" value="4" formaction="syukka.php">出荷</button>
+
+				<?php include('manage_btn.php') ?>
 			</div>
 			<div id="center">
 				<table>

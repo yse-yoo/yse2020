@@ -52,6 +52,32 @@ class PDOEntity
         }
     }
 
+    public function insert($posts)
+    {
+        $values = [];
+        $prepare_values = [];
+        foreach ($this->columns as $column => $option) {
+            $prepare_values[] = '?';
+            $_value = $posts[$column];
+            if ($option['type'] == 'date_string') {
+                $_value = date('Y年m月d日', strtotime($_value));
+            }
+            $_value = "'{$_value}'";
+            $values[] = $_value;
+        }
+
+        $column = implode(',', array_keys($this->columns));
+        $value = implode(',', $values);
+
+        $this->sql = "INSERT INTO {$this->table_name} ({$column}) values ({$value});";
+        $result = $this->pdo->query($this->sql);
+        if (!$result) {
+            $this->sql_error = true;
+            exit('insert error');
+        }
+        return $this;
+    }
+
     public function getRow()
     {
         $this->query();

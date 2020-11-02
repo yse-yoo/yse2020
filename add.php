@@ -26,7 +26,7 @@ require_once 'BookAddService.php';
 	<form action="add.php" method="post">
 		<div id="pagebody">
 			<div id="error">
-				<?php ?>
+				<?= @$error_message ?>
 			</div>
 			<div id="center">
 				<table>

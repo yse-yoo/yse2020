@@ -11,13 +11,25 @@ class Book extends PDOEntity
     public $delete_column = 'is_delete';
 
     public $columns = [
-        'title' => ['type' => 'varchar'],
-        'author' => ['type' => 'varchar'],
-        'salesDate' => ['type' => 'date_string'],
+        'title' => ['type' => 'varchar', 'require' => true],
+        'author' => ['type' => 'varchar', 'require' => true],
+        'salesDate' => ['type' => 'date_string', 'require' => true],
         'isbn' => ['type' => 'varchar'],
-        'price' => ['type' => 'varchar'],
+        'price' => ['type' => 'varchar', 'require' => true],
         'stock' => ['type' => 'varchar'],
     ];
+
+    public function validate($posts)
+    {
+        foreach ($this->columns as $column => $values) {
+            if (isset($values['require']) && $values['require']) {
+                if (!isset($values[$column]) || empty($values[$column])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public function nextId()
     {

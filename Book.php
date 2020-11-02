@@ -7,6 +7,8 @@ class Book extends PDOEntity
     public $current_offset = 0;
     public $current_count = 0;
     public $table_name = 'books';
+    public $is_hide_soft_delete = true;
+    public $delete_column = 'is_delete';
 
     public $columns = [
         'title' => ['type' => 'varchar'],
@@ -30,7 +32,7 @@ class Book extends PDOEntity
         if (isset($_GET['search'])) {
             $_SESSION['zaiko']['search'] = $_GET['search'];
         }
-        if (isset($_SESSION['zaiko']['search'])) {
+        if (isset($_SESSION['zaiko']['search']) && $_SESSION['zaiko']['search']) {
             $this->like('title', $_SESSION['zaiko']['search']);
         }
         return $this;
@@ -55,13 +57,20 @@ class Book extends PDOEntity
     public function queryList()
     {
         $this->sql = "SELECT * FROM books";
+        if (isset($this->delete_column) && $this->is_hide_soft_delete) {
+            $this->where($this->delete_column, 0);
+        }
         $this->limit($this->current_limit)->offset($this->current_offset)->query();
         return $this;
     }
 
     public function getCount()
     {
-        $this->sql = "SELECT count(id) AS count FROM books";
+        if ($this->is_hide_soft_delete) {
+            $this->sql = "SELECT count(id) AS count FROM books WHERE {$this->delete_column} = 0";
+        } else {
+            $this->sql = "SELECT count(id) AS count FROM books";
+        }
         $results = $this->getRow();
         if (isset($results['count'])) $this->current_count = $results['count'];
         return $this->current_count;
@@ -96,15 +105,18 @@ class Book extends PDOEntity
         $this->current_offset = $this->getOffset();
         $this->total_page_count = $this->getTotalPageCount();
 
+        $start = 1;
+        $end = $this->total_page_count;
         if ($this->total_page_count > 10) {
-            $this->pages = range($this->current_page, $this->current_page + 10);
-        } else {
-            $max_page_count = $this->current_page + $this->total_page_count;
-            if ($max_page_count > $this->current_count) {
-                $max_page_count = $this->current_count;
+            if ($this->current_page + 10 > $this->total_page_count) {
+                $end = $this->total_page_count;
+                $start = $end - 10;
+            } else {
+                $start = $this->current_page;
+                $end = $start + 10;
             }
-            $this->pages = range($this->current_page, $max_page_count);
         }
+        $this->pages = range($start, $end);
 
         $this->statement = null;
         $this->queryList();

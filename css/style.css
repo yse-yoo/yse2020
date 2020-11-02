@@ -13,6 +13,7 @@
 .btn {
 	margin-top: 20px;
 	margin-left: 15px;
+    padding: 3px 10px;
 	width:75px;
 	height: 40px;
 	outline: none;

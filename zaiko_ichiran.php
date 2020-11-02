@@ -19,7 +19,7 @@ require_once 'ZaikoService.php';
 		<form action="zaiko_ichiran.php" method="get">
 			<input type="text" name="search" value="<?= @$_SESSION['zaiko']['search'] ?>">
 			<button class="btn info">検索</button>
-			<a href="?reset=1" class="btn">リセット</a>
+			<a href="?reset=1" class="btn info">リセット</a>
 		</form>
 	</div>
 	<form action="zaiko_ichiran.php" method="post" id="myform" name="myform">
@@ -50,6 +50,7 @@ require_once 'ZaikoService.php';
 							<th id="salesDate">発売日</th>
 							<th id="itemPrice">金額</th>
 							<th id="stock">在庫数</th>
+							<th id="is_delete">削除フラグ</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -62,6 +63,7 @@ require_once 'ZaikoService.php';
 								<td><?= $extract['salesDate'] ?></td>
 								<td><?= $extract['price'] ?></td>
 								<td><?= $extract['stock'] ?></td>
+								<td><?= $extract['is_delete'] ?></td>
 							</tr>
 						<?php endwhile ?>
 					</tbody>

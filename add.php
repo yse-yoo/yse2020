@@ -39,6 +39,7 @@ require_once 'BookAddService.php';
 							<th id="salesDate">発売日</th>
 							<th id="itemPrice">金額(円)</th>
 							<th id="stock">在庫数</th>
+							<th id="">入荷数</th>
 						</tr>
 					</thead>
 					<tr>
@@ -48,6 +49,7 @@ require_once 'BookAddService.php';
 						<td><input type="text" name="book[author]" value="<?= @$book->value['author'] ?>"></td>
 						<td><input type="date" name="book[salesDate]" value="<?= @$book->value['salesDate'] ?>"></td>
 						<td><input type="number" min="0" name="book[price]" value="<?= @$book->value['price'] ?>"></td>
+						<td>0</td>
 						<td><input type="number" min="0" name="book[stock]" value="<?= @$book->value['stock'] ?>"></td>
 					</tr>
 				</table>

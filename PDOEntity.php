@@ -11,6 +11,8 @@ class PDOEntity
     public $statement;
     public $conditions;
     public $limit = '';
+    public $is_hide_soft_delete = false;
+    public $delete_column = '';
 
     function __construct()
     {
@@ -42,7 +44,6 @@ class PDOEntity
     public function query()
     {
         $this->buildSQL();
-        // $this->sql .= ';';
         try {
             $this->statement = $this->pdo->query($this->sql);
             if (!$this->statement) exit($this->sql);
@@ -78,6 +79,43 @@ class PDOEntity
         return $this;
     }
 
+    public function all()
+    {
+        $this->selectSQL();
+        $this->values = $this->getRows();
+        return $this;
+    }
+
+    public function delete($id)
+    {
+        if (isset($this->delete_column)) {
+            $this->sql = "UPDATE {$this->table_name} SET {$this->delete_column} = true WHERE id = {$id}";
+        } else {
+            $this->sql = "DELETE FROM {$this->table_name} WHERE id = {$id}";
+        }
+        $this->query();
+        return $this;
+    }
+
+    public function deletes($ids)
+    {
+        $id = implode(',', $ids);
+        $where = "WHERE id IN ({$id})";
+        if (isset($this->delete_column)) {
+            $this->sql = "UPDATE {$this->table_name} SET {$this->delete_column} = true {$where};";
+        } else {
+            $this->sql = "DELETE FROM {$this->table_name} {$where};";
+        }
+        $this->query();
+        return $this;
+    }
+
+    public function getRows()
+    {
+        $this->query();
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getRow()
     {
         $this->query();
@@ -111,6 +149,17 @@ class PDOEntity
         return $this;
     }
 
+    public function whereIn($key, $values)
+    {
+        if ($key) {
+            //TODO CAST
+            $values['value'] = implode(',', $values);
+            $values['eq'] = 'IN';
+            $this->conditions[$key] = $values;
+        }
+        return $this;
+    }
+
     public function like($key, $value, $start = '%', $end = '%')
     {
         if ($key) {
@@ -126,17 +175,25 @@ class PDOEntity
     public function whereSQL()
     {
         if ($this->conditions && is_array($this->conditions)) {
+            $sqls = [];
             foreach ($this->conditions as $column => $values) {
                 $value = $values['value'];
-                if (isset($values['start'])) $value = "{$values['start']}{$value}";
-                if (isset($values['end'])) $value = "{$value}{$values['end']}";
-                if (is_bool($values['value'])) {
-                } else {
-                    $value = "'{$value}'";
+                $eq = strtolower($values['eq']);
+                if (!is_bool($value)) {
+                    if ($eq == 'like') {
+                        if (isset($values['start'])) $value = "{$values['start']}{$value}";
+                        if (isset($values['end'])) $value = "{$value}{$values['end']}";
+                    }
+                    if ($eq == 'in') {
+                        $value = "($value)";
+                    } else {
+                        $value = "'{$value}'";
+                    }
                 }
-                $sql = "{$column} {$values['eq']} {$value}";
+                $sqls[] = "{$column} {$values['eq']} {$value}";
             }
-            $this->sql .= " WHERE {$sql}";
+            $where = implode(' AND ', $sqls);
+            $this->sql .= " WHERE {$where}";
         }
     }
 
@@ -148,5 +205,10 @@ class PDOEntity
         if ($this->offset > 0) {
             $this->sql .= " OFFSET {$this->offset}";
         }
+    }
+
+    public function selectSQL()
+    {
+        $this->sql = "SELECT * FROM {$this->table_name}";
     }
 }

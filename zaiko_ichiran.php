@@ -50,7 +50,6 @@ require_once 'ZaikoService.php';
 							<th id="salesDate">発売日</th>
 							<th id="itemPrice">金額</th>
 							<th id="stock">在庫数</th>
-							<th id="is_delete">削除フラグ</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -63,7 +62,6 @@ require_once 'ZaikoService.php';
 								<td><?= $extract['salesDate'] ?></td>
 								<td><?= $extract['price'] ?></td>
 								<td><?= $extract['stock'] ?></td>
-								<td><?= $extract['is_delete'] ?></td>
 							</tr>
 						<?php endwhile ?>
 					</tbody>

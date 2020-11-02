@@ -1,4 +1,5 @@
 <?php
+require_once 'setting.php';
 require_once 'Session.php';
 require_once 'Auth.php';
 require_once 'Book.php';
@@ -15,3 +16,5 @@ if (isset($_GET['reset'])) {
 
 $book = new Book();
 $book->paginate();
+
+require_once 'debug.php';

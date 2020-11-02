@@ -64,18 +64,6 @@ class Book extends PDOEntity
         return $this;
     }
 
-    public function getCount()
-    {
-        if ($this->is_hide_soft_delete) {
-            $this->sql = "SELECT count(id) AS count FROM books WHERE {$this->delete_column} = 0";
-        } else {
-            $this->sql = "SELECT count(id) AS count FROM books";
-        }
-        $results = $this->getRow();
-        if (isset($results['count'])) $this->current_count = $results['count'];
-        return $this->current_count;
-    }
-
     function getTotalPageCount()
     {
         $this->total_page_count = (int) ceil($this->current_count / $this->current_limit);
@@ -100,7 +88,7 @@ class Book extends PDOEntity
     function paginate()
     {
         $this->search();
-        $this->current_count = $this->getCount();
+        $this->current_count = $this->count();
         $this->current_page = $this->getCurrentPage();
         $this->current_offset = $this->getOffset();
         $this->total_page_count = $this->getTotalPageCount();

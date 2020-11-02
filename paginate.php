@@ -1,4 +1,4 @@
-<?php if (isset($book->pages)) : ?>
+<?php if (isset($book->pages) && $book->total_page_count > 0) : ?>
     <div id=" paginate">
         <?= $book->current_count ?>件
         <?= $book->total_page_count ?>ページ

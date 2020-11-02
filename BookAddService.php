@@ -24,3 +24,5 @@ if (isset($_POST['add'])) {
 } else {
     $book->nextId();
 }
+
+require_once 'debug.php';

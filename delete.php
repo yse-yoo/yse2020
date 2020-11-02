@@ -1,5 +1,5 @@
 <?php
-include('DeleteService.php');
+include('BookDeleteService.php');
 ?>
 
 <!DOCTYPE html>

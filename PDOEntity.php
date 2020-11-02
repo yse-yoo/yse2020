@@ -86,6 +86,20 @@ class PDOEntity
         return $this;
     }
 
+    public function count($column = '*')
+    {
+        if ($this->is_hide_soft_delete) $this->where($this->delete_column, false);
+
+        $count = 0;
+        $select = "COUNT($column) AS count";
+        $this->selectSQL($select);
+        $results =  $this->getRow();
+        if (isset($results['count'])) {
+            $count = $results['count'];
+        }
+        return $count;
+    }
+
     public function delete($id)
     {
         if (isset($this->delete_column)) {
@@ -179,16 +193,16 @@ class PDOEntity
             foreach ($this->conditions as $column => $values) {
                 $value = $values['value'];
                 $eq = strtolower($values['eq']);
-                if (!is_bool($value)) {
-                    if ($eq == 'like') {
-                        if (isset($values['start'])) $value = "{$values['start']}{$value}";
-                        if (isset($values['end'])) $value = "{$value}{$values['end']}";
-                    }
-                    if ($eq == 'in') {
-                        $value = "($value)";
-                    } else {
-                        $value = "'{$value}'";
-                    }
+                if (is_bool($value)) {
+                    $value = ($value) ? 'true' : 'false';
+                } elseif ($eq == 'like') {
+                    if (isset($values['start'])) $value = "{$values['start']}{$value}";
+                    if (isset($values['end'])) $value = "{$value}{$values['end']}";
+                }
+                if ($eq == 'in') {
+                    $value = "($value)";
+                } else {
+                    $value = "'{$value}'";
                 }
                 $sqls[] = "{$column} {$values['eq']} {$value}";
             }
@@ -207,8 +221,8 @@ class PDOEntity
         }
     }
 
-    public function selectSQL()
+    public function selectSQL($select = '*')
     {
-        $this->sql = "SELECT * FROM {$this->table_name}";
+        $this->sql = "SELECT {$select} FROM {$this->table_name}";
     }
 }

@@ -8,6 +8,8 @@ require_once 'Message.php';
 Session::start();
 Auth::checkLogin();
 
+$error_message = '';
+
 if (!isset($_POST['books'])) {
     $_SESSION['success'] = '削除する商品をチェックしてください';
     header('Location: zaiko_ichiran.php');
@@ -18,6 +20,11 @@ if (!isset($_POST['books'])) {
         header('Location: zaiko_ichiran.php');
     } else {
         $book->whereIn('id', $_POST['books'])->all();
+        foreach ($book->values as $book->value) {
+            if ($book->value['stock'] > 0) {
+                $error_message = '在庫がある商品があります。削除しますか？';
+            }
+        }
     }
 }
 

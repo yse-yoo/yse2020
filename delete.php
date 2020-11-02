@@ -55,6 +55,9 @@ include('BookDeleteService.php');
                         </tr>
                     <?php endforeach ?>
                 </table>
+                <div id="error">
+                    <?= @$error_message ?>
+                </div>
                 <button type="submit" id="kakutei" formmethod="POST" name="is_delete" value="1">確定</button>
             </div>
         </div>

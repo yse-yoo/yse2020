@@ -20,11 +20,7 @@ if (!isset($_POST['books'])) {
         header('Location: zaiko_ichiran.php');
     } else {
         $book->whereIn('id', $_POST['books'])->all();
-        foreach ($book->values as $book->value) {
-            if ($book->value['stock'] > 0) {
-                $error_message = '在庫がある商品があります。削除しますか？';
-            }
-        }
+        $error_message = $book->checkStockForDelete();
     }
 }
 

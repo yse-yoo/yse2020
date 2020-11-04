@@ -35,10 +35,37 @@ class PDOEntity
         return $this;
     }
 
+    public function loadRequest($key, $session_name = null)
+    {
+        if (isset($_POST[$key])) {
+            $this->value = $_POST[$key];
+            Session::add($key, $this->value, $session_name);
+        }
+        if ($session_name) $this->value = Session::load($key, $session_name);
+    }
+
+    public function loadSession($key, $session_key = null)
+    {
+        $this->value = Session::load($key, $session_key);
+    }
+
     public function buildSQL()
     {
         if ($this->conditions) $this->whereSQL();
         if ($this->limit) $this->limitSQL();
+    }
+
+    public function validate($posts = null)
+    {
+        if (!$posts) $posts = $this->value;
+        foreach ($this->columns as $column => $values) {
+            if (isset($values['require']) && $values['require']) {
+                if (!isset($posts[$column]) || empty($posts[$column])) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public function query()
@@ -53,8 +80,9 @@ class PDOEntity
         }
     }
 
-    public function insert($posts)
+    public function insert($posts = null)
     {
+        if (!$posts) $posts = $this->value;
         $values = [];
         $prepare_values = [];
         foreach ($this->columns as $column => $option) {

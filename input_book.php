@@ -1,5 +1,5 @@
 <?php
-require_once 'BookAddService.php';
+require_once 'BookInputService.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -23,7 +23,7 @@ require_once 'BookAddService.php';
 		</nav>
 	</div>
 
-	<form action="add.php" method="post">
+	<form action="add_book.php" method="post">
 		<div id="pagebody">
 			<div id="error">
 				<?= @$error_message ?>

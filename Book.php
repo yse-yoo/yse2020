@@ -14,23 +14,20 @@ class Book extends PDOEntity
         'title' => ['type' => 'varchar', 'require' => true],
         'author' => ['type' => 'varchar', 'require' => true],
         'salesDate' => ['type' => 'date_string', 'require' => true],
-        'isbn' => ['type' => 'varchar'],
+        'isbn' => ['type' => 'varchar', 'require' => true],
         'price' => ['type' => 'varchar', 'require' => true],
         'stock' => ['type' => 'varchar'],
     ];
 
-    public function validate($posts)
+    public function checkStockForDelete()
     {
-        foreach ($this->columns as $column => $values) {
-            if (isset($values['require']) && $values['require']) {
-                if (!isset($values[$column]) || empty($values[$column])) {
-                    return false;
-                }
+        if (!$this->values) return;
+        foreach ($this->values as $value) {
+            if ($value['stock'] > 0) {
+                return '在庫がある商品があります。削除しますか？';
             }
         }
-        return true;
     }
-
     public function nextId()
     {
         $this->sql = "SELECT max(id) + 1 as id FROM books;";

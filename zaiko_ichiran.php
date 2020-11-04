@@ -37,7 +37,9 @@ require_once 'ZaikoService.php';
 
 				<button type="submit" id="btn1" formmethod="POST" name="decision" value="4" formaction="syukka.php">出荷</button>
 
-				<?php include('manage_btn.php') ?>
+				<a class="btn" href="input_book.php">商品追加</a>
+
+				<button type="submit" id="btn1" formmethod="POST" formaction="delete.php">商品削除</button>
 			</div>
 			<div id="center">
 				<table>

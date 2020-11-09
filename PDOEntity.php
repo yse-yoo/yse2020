@@ -10,6 +10,7 @@ class PDOEntity
     public $value;
     public $statement;
     public $conditions;
+    public $sort_orders;
     public $limit = '';
     public $is_hide_soft_delete = false;
     public $delete_column = '';
@@ -52,6 +53,7 @@ class PDOEntity
     public function buildSQL()
     {
         if ($this->conditions) $this->whereSQL();
+        if ($this->sort_orders) $this->orderSQL();
         if ($this->limit) $this->limitSQL();
     }
 
@@ -126,6 +128,18 @@ class PDOEntity
             $count = $results['count'];
         }
         return $count;
+    }
+
+    public function orders($params)
+    {
+        foreach ($params as $column => $order) {
+            $this->order($column, $order);
+        }
+    }
+
+    public function order($column, $order = 'asc')
+    {
+        $this->sort_orders[$column] = $order;
     }
 
     public function delete($id)
@@ -252,5 +266,16 @@ class PDOEntity
     public function selectSQL($select = '*')
     {
         $this->sql = "SELECT {$select} FROM {$this->table_name}";
+    }
+
+    public function orderSQL()
+    {
+        if (!$this->sort_orders) return;
+        foreach ($this->sort_orders as $column => $sort_order) {
+            $sort_order = strtoupper($sort_order);
+            $values[] = "{$column} {$sort_order}";
+        }
+        $sort_string = implode(',', $values);
+        $this->sql .= " ORDER BY {$sort_string}";
     }
 }

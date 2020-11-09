@@ -15,6 +15,9 @@ if (isset($_GET['reset'])) {
 }
 
 $book = new Book();
+if (isset($_GET['order'])) {
+    $book->orders($_GET['order']);
+}
 $book->paginate();
 
 require_once 'debug.php';

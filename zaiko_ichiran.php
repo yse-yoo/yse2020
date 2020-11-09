@@ -49,8 +49,20 @@ require_once 'ZaikoService.php';
 							<th id="id">ID</th>
 							<th id="book_name">書籍名</th>
 							<th id="author">著者名</th>
-							<th id="salesDate">発売日</th>
-							<th id="itemPrice">金額</th>
+							<th id="salesDate">
+								発売日
+								<div>
+									<a href="?order[salesDate]=desc">[新しい順]</a>
+									<a href="?order[salesDate]=asc">[古い順]</a>
+								</div>
+							</th>
+							<th id="itemPrice">
+								金額
+								<div>
+									<a href="?order[price]=desc">[高い順]</a>
+									<a href="?order[price]=asc">[安い順]</a>
+								</div>
+							</th>
 							<th id="stock">在庫数</th>
 						</tr>
 					</thead>

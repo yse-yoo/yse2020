@@ -1,4 +1,6 @@
 <?php
+require_once 'debug.php';
+
 class PDOEntity
 {
     public $db_name = 'zaiko2020_yse';
@@ -10,6 +12,7 @@ class PDOEntity
     public $value;
     public $statement;
     public $conditions;
+    public $or_conditions;
     public $sort_orders;
     public $limit = '';
     public $is_hide_soft_delete = false;
@@ -73,6 +76,9 @@ class PDOEntity
     public function query()
     {
         $this->buildSQL();
+        if (IS_DEBUG) {
+            dump($this->sql);
+        }
         try {
             $this->statement = $this->pdo->query($this->sql);
             if (!$this->statement) exit($this->sql);
@@ -102,6 +108,7 @@ class PDOEntity
 
         $this->sql = "INSERT INTO {$this->table_name} ({$column}) values ({$value});";
         $result = $this->pdo->query($this->sql);
+        dump($this->sql);
         if (!$result) {
             $this->sql_error = true;
             exit('insert error');
@@ -216,32 +223,53 @@ class PDOEntity
         return $this;
     }
 
-    public function like($key, $value, $start = '%', $end = '%')
+    public function like($key, $value, $is_or = false, $start = '%', $end = '%')
     {
         if ($key) {
             $values['value'] = $value;
             $values['eq'] = 'LIKE';
             $values['start'] = $start;
             $values['end'] = $end;
-            $this->conditions[$key] = $values;
+            if ($is_or) {
+                $this->or_conditions[$key] = $values;
+            } else {
+                $this->conditions[$key] = $values;
+            }
         }
         return $this;
     }
 
     public function whereSQL()
     {
+        $sqls = [];
+        //TODO bug
+        if ($this->or_conditions && is_array($this->or_conditions)) {
+            $or_sqls = [];
+            foreach ($this->or_conditions as $column => $values) {
+                $value = $values['value'];
+                $eq = $values['eq'];
+                $start = $values['start'];
+                $end = $values['end'];
+                $or_sqls[] = "{$column} {$eq} '{$start}{$value}{$end}'";
+            }
+            $or_sql = implode(' OR ', $or_sqls);
+            $sqls[] = "({$or_sql})";
+        }
         if ($this->conditions && is_array($this->conditions)) {
-            $sqls = [];
             foreach ($this->conditions as $column => $values) {
                 $value = $values['value'];
                 $eq = strtolower($values['eq']);
-                if (is_bool($value)) {
-                    $value = ($value) ? 'true' : 'false';
-                } elseif ($eq == 'like') {
+                if ($eq == 'like') {
                     if (isset($values['start'])) $value = "{$values['start']}{$value}";
                     if (isset($values['end'])) $value = "{$value}{$values['end']}";
                 }
-                if ($eq == 'in') {
+                if (is_bool($value)) {
+                    if ($value) {
+                        $value = 'TRUE';
+                    } else {
+                        $value = 'FALSE';
+                    }
+                } elseif ($eq == 'in') {
                     $value = "($value)";
                 } else {
                     $value = "'{$value}'";

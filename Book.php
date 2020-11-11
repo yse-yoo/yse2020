@@ -42,7 +42,8 @@ class Book extends PDOEntity
             $_SESSION['zaiko']['search'] = $_GET['search'];
         }
         if (isset($_SESSION['zaiko']['search']) && $_SESSION['zaiko']['search']) {
-            $this->like('title', $_SESSION['zaiko']['search']);
+            $this->like('title', $_SESSION['zaiko']['search'], true);
+            $this->like('author', $_SESSION['zaiko']['search'], true);
         }
         return $this;
     }
@@ -67,7 +68,7 @@ class Book extends PDOEntity
     {
         $this->sql = "SELECT * FROM books";
         if (isset($this->delete_column) && $this->is_hide_soft_delete) {
-            $this->where($this->delete_column, 0);
+            $this->where($this->delete_column, false);
         }
         $this->limit($this->current_limit)->offset($this->current_offset)->query();
         return $this;

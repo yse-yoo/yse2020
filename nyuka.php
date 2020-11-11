@@ -1,4 +1,7 @@
 <?php
+require_once 'setting.php';
+require_once 'debug.php';
+
 /* 
 【機能】
 書籍の入荷数を指定する。確定ボタンを押すことで確認画面へ入荷個数を引き継いで遷移す
@@ -21,7 +24,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 //③SESSIONの「login」フラグがfalseか判定する。「login」フラグがfalseの場合はif文の中に入る。
-if (!$_SESSION['login']){
+if (!$_SESSION['login']) {
 	//④SESSIONの「error2」に「ログインしてください」と設定する。
 	$_SESSION['error2'] = 'ログインしてください';
 	//⑤ログイン画面へ遷移する。
@@ -59,6 +62,7 @@ function getId($id, $con)
 	$sql = "SELECT * FROM books WHERE id = {$id}";
 	$query = $con->query($sql);
 	//⑫実行した結果から1レコード取得し、returnで値を返す。
+	dump($sql);
 	return $query->fetch(PDO::FETCH_ASSOC);
 }
 

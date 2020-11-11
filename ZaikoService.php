@@ -8,6 +8,7 @@ require_once 'Message.php';
 Session::start();
 Auth::checkLogin();
 
+
 //TODO
 if (isset($_GET['reset'])) {
     unset($_SESSION['zaiko']['page']);

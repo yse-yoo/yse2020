@@ -41,17 +41,17 @@ include('BookDeleteService.php');
                         </tr>
                     </thead>
 
-                    <?php foreach ($book->values as $book->value) : ?>
+                    <?php foreach ($book->values as $value) : ?>
                         <tr>
                             <td>
-                                <?= $book->value['id'] ?>
-                                <input type="hidden" name="books[]" value="<?= $book->value['id'] ?>">
+                                <?= $value['id'] ?>
+                                <input type="hidden" name="books[]" value="<?= $value['id'] ?>">
                             </td>
-                            <td><?= $book->value['title'] ?></td>
-                            <td><?= $book->value['author'] ?></td>
-                            <td><?= $book->value['salesDate'] ?></td>
-                            <td><?= $book->value['price'] ?></td>
-                            <td><?= $book->value['stock'] ?></td>
+                            <td><?= $value['title'] ?></td>
+                            <td><?= $value['author'] ?></td>
+                            <td><?= $value['salesDate'] ?></td>
+                            <td><?= $value['price'] ?></td>
+                            <td><?= $value['stock'] ?></td>
                         </tr>
                     <?php endforeach ?>
                 </table>

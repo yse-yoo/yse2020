@@ -52,6 +52,13 @@ require_once 'ZaikoService.php';
 							<th id="salesDate">
 								発売日
 								<div>
+									<?php if (isset($_GET['order']['salesDate'])) : ?>
+										<?php if ($_GET['order']['salesDate'] == 'asc') : ?>
+											<a href="?order[salesDate]=desc">▲</a>
+										<?php elseif ($_GET['order']['salesDate'] == 'desc') : ?>
+											<a href="?order[salesDate]=asc">▼</a>
+										<?php endif ?>
+									<?php endif ?>
 									<a href="?order[salesDate]=desc">[新しい順]</a>
 									<a href="?order[salesDate]=asc">[古い順]</a>
 								</div>
